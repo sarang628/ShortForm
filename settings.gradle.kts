@@ -1,12 +1,6 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -16,9 +10,16 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")
+    }
+    versionCatalogs {
+        create("libs") {
+            from(files("gradle/TorangToml/libs.versions.toml"))
+        }
     }
 }
 
-rootProject.name = "ShortForm"
-include(":app")
- 
+rootProject.name = "ShortForm"        // 루트 프로젝트 정의
+include(":app")     // 하위 프로젝트 1
+include(":library") // 하위 프로젝트 2
+include(":library")
