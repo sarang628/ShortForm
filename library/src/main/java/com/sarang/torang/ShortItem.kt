@@ -1,0 +1,68 @@
+package com.sarang.torang
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun ShortItem(
+    short: ShortVideo,
+    isActive: Boolean
+) {
+    val active by rememberUpdatedState(isActive)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
+        VideoPlayer(
+            videoUrl = short.videoUrl,
+            playWhenReady = active
+        )
+
+        ShortOverlay(
+            likeCount = short.likeCount,
+            isLiked = short.isLiked,
+            modifier = Modifier.align(Alignment.BottomEnd)
+        )
+    }
+}
+
+@Composable
+fun ShortOverlay(
+    likeCount: Int,
+    isLiked: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Default.Favorite,
+            contentDescription = null,
+            tint = if (isLiked) Color.Red else Color.White,
+            modifier = Modifier.size(32.dp)
+        )
+        Text(
+            text = likeCount.toString(),
+            color = Color.White
+        )
+    }
+}

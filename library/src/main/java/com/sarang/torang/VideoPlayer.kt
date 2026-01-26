@@ -21,20 +21,19 @@ import androidx.media3.ui.PlayerView
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
-    videoUrl        : String        = "",
-    playWhenReady   : Boolean       = false,
-    repeatMode      : Int           = Player.REPEAT_MODE_ONE,
-    onClick         : () -> Unit    = {}
+    videoUrl: String,
+    playWhenReady: Boolean,
+    repeatMode: Int = Player.REPEAT_MODE_ONE,
+    onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
-    val exoPlayer = remember {
+    val exoPlayer = remember(videoUrl) {
         ExoPlayer.Builder(context)
             .setMediaSourceFactory(
-                DefaultMediaSourceFactory(
-                    cacheDataSourceFactory(context)
-                )
+                DefaultMediaSourceFactory(cacheDataSourceFactory(context))
             )
+            .setHandleAudioBecomingNoisy(true)
             .build()
             .apply {
                 setMediaItem(MediaItem.fromUri(videoUrl))
@@ -44,28 +43,34 @@ fun VideoPlayer(
     }
 
     LaunchedEffect(playWhenReady) {
-        exoPlayer.playWhenReady = playWhenReady
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            exoPlayer.release()
+        if (playWhenReady) {
+            exoPlayer.play()
+        } else {
+            exoPlayer.pause()
         }
     }
 
+    DisposableEffect(exoPlayer) {
+        onDispose { exoPlayer.release() }
+    }
+
     AndroidView(
-        factory = {
-            PlayerView(it).apply {
-                player = exoPlayer
+        factory = { ctx ->
+            PlayerView(ctx).apply {
                 useController = false
             }
         },
-        modifier = Modifier.fillMaxSize()
-                            .clickable(
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ) {
-                                onClick()
-                            }
+        update = { view ->
+            if (view.player !== exoPlayer) {
+                view.player = exoPlayer
+            }
+        },
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { onClick() }
     )
 }
+
