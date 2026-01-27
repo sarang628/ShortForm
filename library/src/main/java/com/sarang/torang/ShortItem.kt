@@ -34,12 +34,6 @@ fun ShortItem(
             videoUrl = short.videoUrl,
             playWhenReady = active
         )
-
-        ShortOverlay(
-            likeCount = short.likeCount,
-            isLiked = short.isLiked,
-            modifier = Modifier.align(Alignment.BottomEnd)
-        )
     }
 }
 

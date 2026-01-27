@@ -1,5 +1,6 @@
 package com.sarang.torang
 
+import android.graphics.Color
 import androidx.annotation.OptIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -28,36 +29,37 @@ fun VideoPlayer(
 ) {
     val context = LocalContext.current
 
-    val exoPlayer = remember(videoUrl) {
+    val exoPlayer = remember {
         ExoPlayer.Builder(context)
             .setMediaSourceFactory(
                 DefaultMediaSourceFactory(cacheDataSourceFactory(context))
             )
             .setHandleAudioBecomingNoisy(true)
             .build()
-            .apply {
-                setMediaItem(MediaItem.fromUri(videoUrl))
-                this.repeatMode = repeatMode
-                prepare()
-            }
+    }
+
+    LaunchedEffect(videoUrl) {
+        exoPlayer.setMediaItem(MediaItem.fromUri(videoUrl))
+        exoPlayer.repeatMode = repeatMode
+        exoPlayer.prepare()
     }
 
     LaunchedEffect(playWhenReady) {
-        if (playWhenReady) {
-            exoPlayer.play()
-        } else {
-            exoPlayer.pause()
-        }
+        exoPlayer.playWhenReady = playWhenReady
     }
 
-    DisposableEffect(exoPlayer) {
-        onDispose { exoPlayer.release() }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+        }
     }
 
     AndroidView(
         factory = { ctx ->
             PlayerView(ctx).apply {
                 useController = false
+                setShutterBackgroundColor(Color.BLACK)
             }
         },
         update = { view ->
