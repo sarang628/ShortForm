@@ -1,3 +1,6 @@
 [submodule "gradle/TorangToml"]
 	path = gradle/TorangToml
 	url = https://github.com/sarang628/TorangToml.git
+[submodule "documents"]
+	path = documents
+	url = https://github.com/sarang628/documents.git
