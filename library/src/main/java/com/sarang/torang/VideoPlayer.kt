@@ -41,10 +41,13 @@ fun VideoPlayer(
     LaunchedEffect(videoUrl) {
         exoPlayer.setMediaItem(MediaItem.fromUri(videoUrl))
         exoPlayer.repeatMode = repeatMode
-        exoPlayer.prepare()
     }
 
     LaunchedEffect(playWhenReady) {
+        if (playWhenReady && exoPlayer.playbackState == Player.STATE_IDLE) {
+            exoPlayer.prepare()
+        }
+
         exoPlayer.playWhenReady = playWhenReady
     }
 
