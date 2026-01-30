@@ -22,8 +22,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ShortItem(
-    short: ShortVideo,
-    isActive: Boolean
+    short       : ShortVideo,
+    isActive    : Boolean       = false,
+    onPlayed    : () -> Unit    = {}
 ) {
     val active by rememberUpdatedState(isActive)
 
@@ -34,7 +35,8 @@ fun ShortItem(
     ) {
         VideoPlayer(
             videoUrl = short.videoUrl,
-            playWhenReady = active
+            playWhenReady = active,
+            onPlayed = onPlayed
         )
         HorizontalDivider(modifier = Modifier.background(Color.White)
                                              .height(3.dp))

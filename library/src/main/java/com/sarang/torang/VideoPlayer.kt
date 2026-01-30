@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,12 +23,15 @@ import androidx.media3.ui.PlayerView
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
-    videoUrl: String,
-    playWhenReady: Boolean,
-    repeatMode: Int = Player.REPEAT_MODE_ONE,
-    onClick: () -> Unit = {}
+    videoUrl        : String,
+    playWhenReady   : Boolean = false,
+    repeatMode      : Int = Player.REPEAT_MODE_ONE,
+    onClick         : () -> Unit = {},
+    onPlayed        : () -> Unit = {}
 ) {
     val context = LocalContext.current
+
+    val hasNotifiedReady = remember { mutableStateOf(false) }
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context)
@@ -53,7 +57,19 @@ fun VideoPlayer(
 
 
     DisposableEffect(Unit) {
+        val listener = object : Player.Listener {
+            override fun onPlaybackStateChanged(state: Int) {
+                if (state == Player.STATE_READY && !hasNotifiedReady.value) {
+                    hasNotifiedReady.value = true
+                    onPlayed.invoke()
+                }
+            }
+        }
+
+        exoPlayer.addListener(listener)
+
         onDispose {
+            exoPlayer.removeListener(listener)
             exoPlayer.release()
         }
     }
