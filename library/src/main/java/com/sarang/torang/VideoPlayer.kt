@@ -13,6 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -30,6 +33,7 @@ fun VideoPlayer(
     onPlayed        : () -> Unit = {}
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val hasNotifiedReady = remember { mutableStateOf(false) }
 
@@ -55,6 +59,22 @@ fun VideoPlayer(
         exoPlayer.playWhenReady = playWhenReady
     }
 
+    // 라이프사이클에 따라 플레이어 제어
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> exoPlayer.playWhenReady = false // 백그라운드로 가면 일시정지
+                Lifecycle.Event.ON_RESUME -> exoPlayer.playWhenReady =
+                    playWhenReady // 포그라운드로 돌아오면 원래 상태 복원
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     DisposableEffect(Unit) {
         val listener = object : Player.Listener {
