@@ -1,5 +1,6 @@
 package com.sarang.torang
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,12 +14,18 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+
+private const val tag = "__ShortItem"
 
 @Composable
 fun ShortItem(
@@ -27,17 +34,38 @@ fun ShortItem(
     onPlayed    : () -> Unit    = {}
 ) {
     val active by rememberUpdatedState(isActive)
+    var isPlayed by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        Log.d(tag, "${short.id}, ${short.videoUrl}")
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            //.background(Color.Black)
+            .background(Color.Black)
     ) {
         VideoPlayer(
             videoUrl = short.videoUrl,
             playWhenReady = active,
-            onPlayed = onPlayed
+            onPlayed = {
+                isPlayed = true
+                onPlayed()
+            }
         )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (!isPlayed) {
+                LocalThumbImageLoader.current.invoke(
+                    ThumbImageLoaderData(
+                        modifier = Modifier, // 여기서 fillMaxSize 제거
+                        url = short.thumbNailUrl
+                    )
+                )
+            }
+        }
         HorizontalDivider(modifier = Modifier.background(Color.White)
                                              .height(3.dp))
     }

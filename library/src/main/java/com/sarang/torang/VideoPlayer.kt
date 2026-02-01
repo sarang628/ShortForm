@@ -1,6 +1,7 @@
 package com.sarang.torang
 
 import android.graphics.Color
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,12 +18,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
-
+private const val tag = "__VideoPlayer"
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
@@ -34,7 +36,6 @@ fun VideoPlayer(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-
     val hasNotifiedReady = remember { mutableStateOf(false) }
 
     val exoPlayer = remember {
@@ -45,6 +46,7 @@ fun VideoPlayer(
             .setHandleAudioBecomingNoisy(true)
             .build()
     }
+
 
     LaunchedEffect(videoUrl) {
         exoPlayer.setMediaItem(MediaItem.fromUri(videoUrl))

@@ -24,6 +24,12 @@ import kotlinx.coroutines.flow.map
 fun ShortListScreen(
     viewModel: ShortsPlayListViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    ShortListScreen(viewModel.shorts)
+}
+@Composable
+fun ShortListScreen(
+    videos : List<ShortVideo>
+) {
 
     val listState = rememberLazyListState()
 
@@ -49,17 +55,16 @@ fun ShortListScreen(
 
                 playingIndex.value = index
 
-                playingId.value = viewModel.shorts.getOrNull(index)?.id
+                playingId.value = videos.getOrNull(index)?.id
             }
     }
 
     LazyColumn(state = listState,) {
-        items(items = viewModel.shorts,
+        items(items = videos,
               key   = { it.id },
               contentType = { "short_video" }) {
             Box(Modifier.height(400.dp).fillMaxWidth()){
                 var count by rememberSaveable { mutableStateOf(0) }
-                Text("onPlayed : $count")
                 ShortItem(
                     short = it,
                     isActive = it.id == playingId.value,
