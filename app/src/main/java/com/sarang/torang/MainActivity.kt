@@ -99,7 +99,10 @@ class MainActivity : ComponentActivity() {
                             Box {
                                 CompositionLocalProvider(
                                     LocalThumbImageLoader provides {
-                                        TorangAsyncImage(model = it.url)
+                                        TorangAsyncImage(
+                                            modifier = it.modifier,
+                                            model = it.url
+                                        )
                                     }
                                 ) {
                                     //ShortsPageScreen()

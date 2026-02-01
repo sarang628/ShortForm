@@ -31,7 +31,8 @@ private const val tag = "__ShortItem"
 fun ShortItem(
     short       : ShortVideo,
     isActive    : Boolean       = false,
-    onPlayed    : () -> Unit    = {}
+    onPlayed    : () -> Unit    = {},
+    onClick         : () -> Unit = {},
 ) {
     val active by rememberUpdatedState(isActive)
     var isPlayed by remember { mutableStateOf(false) }
@@ -51,21 +52,19 @@ fun ShortItem(
             onPlayed = {
                 isPlayed = true
                 onPlayed()
-            }
+            },
+            onClick = onClick
         )
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            if (!isPlayed) {
-                LocalThumbImageLoader.current.invoke(
-                    ThumbImageLoaderData(
-                        modifier = Modifier, // 여기서 fillMaxSize 제거
-                        url = short.thumbNailUrl
-                    )
+
+        if(!isPlayed){
+            LocalThumbImageLoader.current.invoke(
+                ThumbImageLoaderData(
+                    modifier = Modifier.align(Alignment.Center),
+                    url = short.thumbNailUrl
                 )
-            }
+            )
         }
+
         HorizontalDivider(modifier = Modifier.background(Color.White)
                                              .height(3.dp))
     }
