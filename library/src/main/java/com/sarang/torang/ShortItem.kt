@@ -49,10 +49,8 @@ fun ShortItem(
         VideoPlayer(
             videoUrl = short.videoUrl,
             playWhenReady = active,
-            onPlayed = {
-                isPlayed = true
-                onPlayed()
-            },
+            onPlayed = { isPlayed = true
+                         onPlayed() },
             onClick = onClick
         )
 
@@ -64,9 +62,6 @@ fun ShortItem(
                 )
             )
         }
-
-        HorizontalDivider(modifier = Modifier.background(Color.White)
-                                             .height(3.dp))
     }
 }
 
