@@ -29,10 +29,11 @@ private const val tag = "__VideoPlayer"
 @Composable
 fun VideoPlayer(
     videoUrl        : String,
-    playWhenReady   : Boolean = false,
-    repeatMode      : Int = Player.REPEAT_MODE_ONE,
-    onClick         : () -> Unit = {},
-    onPlayed        : () -> Unit = {}
+    playWhenReady   : Boolean       = false,
+    repeatMode      : Int           = Player.REPEAT_MODE_ONE,
+    onClick         : () -> Unit    = {},
+    onPlayed        : () -> Unit    = {},
+    isMuted         : Boolean       = false,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -47,6 +48,9 @@ fun VideoPlayer(
             .build()
     }
 
+    LaunchedEffect(isMuted) {
+        exoPlayer.volume = if (isMuted) 0f else 1f
+    }
 
     LaunchedEffect(videoUrl) {
         Log.d(tag, "load : $videoUrl")
