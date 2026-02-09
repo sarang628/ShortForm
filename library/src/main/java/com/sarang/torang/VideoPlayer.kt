@@ -1,6 +1,7 @@
 package com.sarang.torang
 
 import android.graphics.Color
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -48,6 +49,7 @@ fun VideoPlayer(
 
 
     LaunchedEffect(videoUrl) {
+        Log.d(tag, "load : $videoUrl")
         exoPlayer.setMediaItem(MediaItem.fromUri(videoUrl))
         exoPlayer.repeatMode = repeatMode
     }

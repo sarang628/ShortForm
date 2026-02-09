@@ -37,7 +37,7 @@ fun ShortItem(
     val active by rememberUpdatedState(isActive)
     var isPlayed by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(short) {
         Log.d(tag, "${short.id}, ${short.videoUrl}")
     }
 
